@@ -2,8 +2,6 @@
 
 ## Introduction
 
-## Introduction to Cerebral
-
 Cerebral is an innovative smart assistant tailored for industrial applications, specifically designed to enhance operational efficiency at Contoso Motors. This solution leverages advanced Generative AI technology to interact with factory workers using natural language, making it intuitive and user-friendly. Cerebral’s core aim is to streamline decision-making processes and reduce downtime by providing immediate access to critical information and operational insights.
 
 ### Key Features and Benefits
@@ -39,7 +37,7 @@ The architecture of Cerebral integrates various components to provide a robust s
    - This is the primary user interface where operational technology (OT) frontline workers, such as mechanics, maintenance personnel, or plan managers, interact with the Cerebral system. Users can input their queries in natural language, which are then processed by the system to fetch relevant information or perform actions.
 
 2. **Redis Cache**:
-   - Utilized as a caching layer to store temporary data which may include session states, user preferences, and frequently accessed data to speed up response times.
+   - Utilized as a caching layer to store temporary data which may include session states and conversations.
 
 3. **Web Application**:
    - Hosts the user interface and the agent responsible for classifying questions based on the input received from the OT frontline worker.
@@ -60,7 +58,7 @@ The architecture of Cerebral integrates various components to provide a robust s
    - Stores and manages access to manuals and troubleshooting guides which are used to answer queries related to equipment maintenance and other operational procedures.
 
 9. **SLM/LLM Model “Phi-2”**:
-   - A sophisticated language model that helps in interpreting complex technical queries and generating accurate responses based on the contextual understanding of the industry-specific data.
+   - A sophisticated language model that helps in interpreting complex technical queries and generating accurate responses based on the contextual understanding of the industry-specific data. For more information see ![Phi-3 open models](https://azure.microsoft.com/en-us/products/phi-3)
 
 10. **Assembly Line Simulator**:
     - Simulates data from the production line, which can be used for testing and demonstration purposes without the need to access the actual production environment.
@@ -68,17 +66,45 @@ The architecture of Cerebral integrates various components to provide a robust s
 11. **Azure IoT Operations and MQTT Broker**:
     - Manages device communication and data flow between the on-premises infrastructure and Azure services, ensuring secure and reliable data handling.
 
-
-### Communication Flow
-
-- Data flows through the system starting from the user query input through the OT frontline worker interface.
-- The classify agent determines the nature of the query and passes it to the query processing orchestrator.
-- Based on the query type, it might interact with Azure OpenAI for AI-driven insights or direct the query to either InfluxDB for real-time data or the Chroma vector database for document retrieval.
-- The results are then presented back to the user through the web application, potentially utilizing ADX dashboards for enhanced data visualization.
+![Cerebral Architecture Diagram](/resources/images/architecture.png)
 
 This modular yet integrated architecture allows Cerebral to offer a flexible, scalable solution adaptable to various industrial environments, enhancing operational efficiency through AI-driven automation and real-time data processing.
 
-![Cerebral Architecture Diagram](/resources/images/architecture.png)
+### Communication Flow
+
+The decision tree for "Cerebral" illustrates the AI-driven process from user query to response generation, integrating both data retrieval and document look-up functionalities. Below is a breakdown of each step in the data flow:
+
+- **User Prompt**:
+  - The process begins when a user inputs a prompt, such as "Show me the oil temperature in the past 15 minutes." This prompt initiates the decision-making process within the system.
+
+- **Query Classification Using Azure Open AI**:
+  - The user's prompt is sent to Azure Open AI for query classification. Azure Open AI evaluates the content and context of the query to determine whether the user is requesting real-time data or looking for information contained in documents.
+
+- **Classification**:
+  - Based on Azure Open AI's analysis, the query is classified into one of two paths:
+    - Data-related queries are directed towards executing database queries.
+    - Document-related queries proceed towards searching within a vector database.
+
+- **Execution Paths**:
+  - **Data Path**:
+    - **InfluxDB Query Execution**: If the query is classified as data-related, the user's prompt is converted into a specific query for InfluxDB, which retrieves time-series data relevant to the query.
+    - **Data Interpretation and Analysis**: The retrieved data is then analyzed, and the system generates automated recommendations or insights based on the data.
+  - **Document Path**:
+    - **VectorDB Query Execution**: For document-related queries, the system translates the prompt into a search query for a chroma vector database. This database contains indexed manuals and troubleshooting guides.
+    - **LLM Vector Search Integration**: The results from the vector database are integrated with the user's query to compile a comprehensive response detailing the information or steps required.
+
+- **Backend Processing on the Edge**:
+  - Queries are processed on backend systems located on the Edge, utilizing Azure IoT MQ for communication and executing necessary data queries or document retrievals.
+
+- **Response Generation**:
+  - **Dynamic HTML Response**: For both paths, the final step involves generating a dynamic HTML response that presents the information. For data queries, this may include graphs and tables displaying trends or specific data points. For document queries, this might consist of structured information or steps derived from the manuals.
+
+- **Display to User**:
+  - The generated response is displayed to the user, providing them with either the requested data visualized effectively or a well-structured answer from the document search, enabling them to make informed decisions or perform tasks more efficiently.
+
+This communication flow highlights "Cerebral's" capability to handle diverse user requests by leveraging advanced AI classification and integration of multiple data sources, enhancing the decision-making and troubleshooting capabilities at Contoso Motors.
+
+![Cerebral Data Flow](/resources/images/dataflow.png)
 
 ## Solution Overview
 
@@ -86,16 +112,46 @@ The solution is divided into two main components:
 1. **Azure OpenAI Implementation:** This involves setting up Cerebral to leverage Azure OpenAI for natural language processing and query classification.
 2. **RAG at the Edge:** This involves configuring Cerebral to use Chroma as a vector database and PHI-2 for on-premises language processing, allowing data processing to occur at the edge for faster response times.
 
-## Prerequisites
+## Pre-requisites
 
-Before starting, ensure you have the following:
-- **Azure Subscription**: An active Azure subscription.
-- **Azure CLI**: Installed and configured on your machine.
-- **Visual Studio Code**: With Azure extensions for easier management.
-- **K3S**: A lightweight Kubernetes distribution.
-- **Cluster Enrolled in Azure Arc**: Your K3S cluster should be enrolled in Azure Arc.
-- **Azure IoT Operations**: Set up for managing IoT devices and edge deployments.
-- **Security Requirements**: Proper security configurations, including RBAC and network policies.
+Before deploying Cerebral, several pre-requisites must be fulfilled to ensure a successful installation and operation. The system is designed to run on both virtual machines and physical servers that can handle edge computing tasks effectively.
+
+### Hardware Requirements
+
+1. **Linux-Based System**: Cerebral requires a Linux-based system, specifically a VM or physical machine running **Linux Ubuntu 22.04**. This system will perform as an edge server, handling queries directly from the production line and interfacing with other operational systems.
+
+2. **Resource Specifications**:
+   - **Minimal Resource Deployment**: For deployments using the Language Learning Model (LLM) hosted on Azure, a lighter resource footprint is feasible. A machine with at least **16 GB RAM and 4 CPU cores** should suffice.
+   - **Full Resource Deployment**: For on-premises deployments where the System Lifecycle Management (SLM) is also located on-premises, a more robust system is required. It is recommended to use an Azure VM configured to simulate an edge environment with **32 GB RAM and 8 CPU cores**.
+
+### Software Requirements
+
+- **Azure CLI**: Essential for interacting with Azure services.
+- **K3s**: Lightweight Kubernetes distribution suitable for edge computing environments.
+- **Curl**: Tool to transfer data from or to a server, used during various installation steps.
+
+### Network Requirements
+
+To ensure smooth communication and operation of the Cerebral, specific network configurations are necessary. These configurations cater to the infrastructure's hybrid nature, leveraging both Azure services and on-premises components.
+
+#### Azure Arc for Kubernetes
+
+Cerebral utilizes [Azure Arc for Kubernetes](https://docs.microsoft.com/en-us/azure/azure-arc/kubernetes/overview) to extend Azure management capabilities to Kubernetes clusters anywhere. This integration allows for the management of Kubernetes clusters across on-premises, edge, and multi-cloud environments through Azure's control plane.
+
+#### Control Plane
+
+The control plane of Cerebral, managed through Azure Arc, requires network configurations that adhere to Azure Arc's [networking requirements](https://docs.microsoft.com/en-us/azure/azure-arc/kubernetes/network-requirements). It's crucial to ensure that all necessary ports and endpoints are accessible to facilitate command and control operations seamlessly.
+
+#### Data Plane
+
+For the data plane, which handles the direct processing and movement of operational data:
+- **Port 443 (HTTPS)**: This port is used predominantly to secure data transmission across the network, ensuring encrypted communication for all data exchanges between the edge devices and the centralized data services.
+
+### Note on Deployment Types
+
+- **Cloud-Based LLM Deployment**: This setup requires minimal resources at the Edge and leverages Azure's robust cloud capabilities for processing and data handling, suitable for scenarios with adequate network connectivity and less stringent data locality requirements.
+- **On-Premises SLM Deployment**: This approach is ideal for environments where the integration with on premises data is requiered and is requieres to have the SLM at the edge. It demands more substantial resources but provides enhanced control over data and processes.
+
 
 ## Solution Build Steps
 
@@ -203,6 +259,8 @@ Before starting, ensure you have the following:
      az iot ops init --subscription $SUBSCRIPTION_ID -g $RESOURCE_GROUP --cluster $CLUSTER_NAME --custom-location testscriptscluster-cl-4694 -n $INSTANCE_NAME --broker broker --kv-id /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KV_NAME --add-insecure-listener --simulate-plc
      ```
 
+
+
 ### Step 2 - Install Cerebral
 
 1. **Deploy Namespace, InfluxDB, Simulator, and Redis:**
@@ -238,7 +296,7 @@ Before starting, ensure you have the following:
      ```
 
 2. **Access InfluxDB:**
-   - Use a web browser to connect to the public IP of the InfluxDB service to access its interface. Validate that there is a bucket named `manufactura` and that it contains a measurement called `assembly line` with values.
+   - Use a web browser to connect to the public IP of the InfluxDB service to access its interface. Validate that there is a bucket named `manufacturing` and that it contains a measurement called `assemblyline` with values.
 
 
 
@@ -265,6 +323,65 @@ Before starting, ensure you have the following:
 
 5. **Verify All Components:**
    - Ensure that all components are functioning correctly by checking the pods and services.
+
+
+### Testing Cerebral
+
+At this point in the setup, "Cerebral" is fully operational using only Azure Open AI for processing queries. Here are the steps to test the functionality of the system:
+
+1. **Accessing the Web Interface**:
+   - Open your web browser and navigate to the web address of your server appended with port 5000. For example, if you are running the server locally, you would go to:
+     ```
+     http://localhost:5000
+     ```
+
+     ![Login to Cerebral](/resources/images/login.png)
+
+2. **Logging In**:
+   - Once the Cerebral login page loads, use the following credentials to log in:
+     - **Username**: agora
+     - **Password**: ArcPassword123!!
+
+3. **Using Cerebral**:
+   - After logging in, you will be directed to the main interface where you can begin interacting with the system. You can start by typing a query related to the operational data or documentation in the provided text field.
+
+4. **Submitting Queries**:
+   - Enter your question in the text box or choose a common question from the FAQ list displayed on the page. Hit the "Submit" button to see Cerebral in action.
+
+   ![Login to Cerebral](/resources/images/login.png)
+
+5. **Viewing Responses**:
+   - The system will process your query using Azure Open AI, and the response, whether it be data visualizations or text information, will be displayed on the same page. This allows you to assess the accuracy and relevance of the response to your query.
+
+    #### 1. User Query based in Data
+    - **User Prompt**: "Show me the Oil temperature in the past 15 minutes."
+      - The user, inputs a natural language query regarding oil temperature data over a specified time frame.
+
+    ##### System Response
+    - **Interpretation and Data Analysis**:
+      - The system interprets the question and accesses real-time data from the "manufacturing" bucket via an InfluxDB query specifically tailored to retrieve oil temperature readings from the last 15 minutes.
+      - The response includes a detailed analysis of the oil temperature trends observed, mentioning specific temperature readings at various intervals to give a comprehensive view of the data behavior.
+
+    - **Proactive Recommendations**:
+      - Based on the analyzed data, Cerebral offers proactive recommendations. It suggests initiating a quick system check to identify potential causes for the fluctuations observed in the oil temperatures, thereby aiding in preemptive maintenance and operational efficiency.
+
+    - **Dynamic Graph of Oil Temperature**:
+      - Below the textual analysis, a dynamic graph visually represents the oil temperature data over the specified period. This graphical representation allows users to easily visualize trends and anomalies in the data, enhancing the interpretative experience.
+
+    ##### Interaction Features
+    - The interface is designed for ease of use, allowing users to quickly navigate through historical queries and responses. The session maintains a continuous flow, making it easy for users to follow the conversation and refer back to earlier interactions.
+
+
+   ![Response based in near real time data](/resources/images/query-data.png)
+
+   
+
+
+6. **Evaluating Performance**:
+   - Test various queries to evaluate the performance and responsiveness of the system. Check how well the system interprets and responds to different types of queries, and note any areas for improvement.
+
+By following these steps, you can ensure that "Cerebral" is functioning correctly and efficiently, leveraging Azure Open AI's capabilities to provide accurate and timely information to the end-user.
+
    
 
 ### Conclusion
