@@ -58,7 +58,7 @@ The architecture of Cerebral integrates various components to provide a robust s
    - Stores and manages access to manuals and troubleshooting guides which are used to answer queries related to equipment maintenance and other operational procedures.
 
 9. **SLM/LLM Model “Phi-2”**:
-   - A sophisticated language model that helps in interpreting complex technical queries and generating accurate responses based on the contextual understanding of the industry-specific data. For more information see ![Phi-3 open models](https://azure.microsoft.com/en-us/products/phi-3)
+   - A sophisticated language model that helps in interpreting complex technical queries and generating accurate responses based on the contextual understanding of the industry-specific data. For more information see [Phi-3 open models](https://azure.microsoft.com/en-us/products/phi-3)
 
 10. **Assembly Line Simulator**:
     - Simulates data from the production line, which can be used for testing and demonstration purposes without the need to access the actual production environment.
@@ -346,6 +346,12 @@ At this point in the setup, "Cerebral" is fully operational using only Azure Ope
 3. **Using Cerebral**:
    - After logging in, you will be directed to the main interface where you can begin interacting with the system. You can start by typing a query related to the operational data or documentation in the provided text field.
 
+   - **Interaction Tools**:
+      - **Text Input Box**: Allows users to type in their questions or concerns.
+      - **Verbose Mode Checkbox**: Users can toggle this to receive more detailed in the response generation and see the data flow.
+      - **Send Button**: Sends the current query to the system for processing.
+      - **Reset Chat History Button**: Clears the session history, allowing users to start afresh without previous interactions.
+
 4. **Submitting Queries**:
    - Enter your question in the text box or choose a common question from the FAQ list displayed on the page. Hit the "Submit" button to see Cerebral in action.
 
@@ -376,7 +382,28 @@ At this point in the setup, "Cerebral" is fully operational using only Azure Ope
    ![Response based in near real time data](/resources/images/query-data.png)
 
 
+    #### 2. User Query based in Documents
 
+    This screenshot illustrates the Cerebral SmartOps Assistant interface, where a user queries about troubleshooting a robotic arm motor. The system is designed to provide detailed, actionable advice based on documented resources, tailored to support manufacturing maintenance engineers.
+    
+      - **Prompt**: "How can we fix the problem with the motor of my robotic arm? Are there any guidelines or manuals?"
+      - This prompt demonstrates the system's ability to understand and respond to detailed, technical queries. Users can input queries directly related to their field, with the system providing precise troubleshooting steps.
+
+    - **System Response**:
+      - **Detailed Guidance**: The response outlines essential steps for diagnosing the root cause of the problem, suggesting checks for motor wiring, encoders, and referring to the user manual for comprehensive troubleshooting procedures.
+      - **Proactive Assistance**: It advises on inspecting for physical damage and provides guidance on how to access further technical support if necessary, embodying an all-encompassing support tool.
+
+    - **Frequently Asked Questions (FAQ)**:
+      - Quick-access buttons to common queries help streamline the troubleshooting process by providing immediate answers to standard questions, such as checking the oil temperature or evaluating assembly line performance.
+
+    ##### Adaptability of the Interface
+
+    - The user prompt can be tailored to fit different roles within the manufacturing environment. While the default setup caters to maintenance engineers, the underlying code can be modified to accommodate other technical roles, enhancing the system's versatility and application in diverse operational contexts.
+
+    ##### Functionality
+    - Cerebral integrates with Retrieval-augmented generation (RAG) for document retrieval, dynamically accessing operational manuals and troubleshooting guides. When fully deployed, it will use indexed information from the Chroma vector database and contextualize responses using SLM phi-2, allowing for highly tailored and informed interactions.
+
+    ![Response based in near real time data](/resources/images/query-documents.png)
 
 6. **Evaluating Performance**:
    - Test various queries to evaluate the performance and responsiveness of the system. Check how well the system interprets and responds to different types of queries, and note any areas for improvement.
