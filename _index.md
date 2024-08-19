@@ -439,8 +439,8 @@ This strategic transition to RAG on the Edge marks a significant enhancement in 
 As we proceed with this transition, users can expect a more dynamic and responsive system capable of handling complex queries with greater precision and speed. This enhancement solidifies Cerebral's position as a cutting-edge tool in the realm of industrial operational technology, ready to tackle the challenges of modern manufacturing and production processes.
 
 
-Install Helm 
-
+- Install Helm 
+```bash
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 
 chmod 700 get_helm.sh
@@ -448,17 +448,29 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 
 helm version
+```
 
-Install Dapr runtime on the cluster, for more information see [here](https://learn.microsoft.com/en-us/azure/iot-operations/create-edge-apps/howto-develop-dapr-apps).
-
+- Install Dapr runtime on the cluster, for more information see [here](https://learn.microsoft.com/en-us/azure/iot-operations/create-edge-apps/howto-develop-dapr-apps).
+```bash
 helm repo add dapr https://dapr.github.io/helm-charts/
 helm repo update
 helm upgrade --install dapr dapr/dapr --version=1.11 --namespace dapr-system --create-namespace --wait
+```
 
-Deploy Azure IoT MQ - Dapr PubSub Component
+- Deploy Azure IoT MQ - Dapr PubSub Component
+```bash
+kubectl apply -f https://raw.githubusercontent.com/armandoblanco/cerebral-app/main/deployment/rag-on-the-edge/rag-mq-components.yaml
+```
+
+- Deploy tho other components of RAG on the Edge
+```bash
+kubectl apply -f https://raw.githubusercontent.com/armandoblanco/cerebral-app/main/deployment/rag-on-the-edge/rag-vdb-dapr-workload.yaml
+kubectl apply -f https://raw.githubusercontent.com/armandoblanco/cerebral-app/main/deployment/rag-on-the-edge/rag-interface-dapr-workload.yaml
+kubectl apply -f https://raw.githubusercontent.com/armandoblanco/cerebral-app/main/deployment/rag-on-the-edge/rag-web-workload.yaml
+kubectl apply -f https://raw.githubusercontent.com/armandoblanco/cerebral-app/main/deployment/rag-on-the-edge/rag-llm-dapr-workload.yaml
+```
 
 
-  
 
 ### Conclusion
 

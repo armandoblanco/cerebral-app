@@ -23,13 +23,13 @@ spec:
 
       containers:
         - name: rag-web
-          image: ccselftestacr.azurecr.io/jumpstart-newui-web:v19
+          image: agoraarmbladev.azurecr.io/jumpstart-newui-web:v1
           imagePullPolicy: Always
           ports:  
           - containerPort: 8501
           env:
           - name: Login
-            value: "True"
+            value: "False"
           # livenessProbe:
           #   initialDelaySeconds: 100
           #   httpGet:

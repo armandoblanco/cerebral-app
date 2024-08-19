@@ -49,12 +49,12 @@ spec:
 
       containers:
         - name: rag-llm
-          image: ccselftestacr.azurecr.io/jumpstart-rag-slm:v3
+          image: agoraarmbladev.azurecr.io/jumpstart-rag-slm:v2
           imagePullPolicy: Always
           # Remove commented out env variable if you want to override the # of logical cores in your system
-          # env:
-          # - name: N_THREADS # Number of CPU for LLM used for inferencing
-          #   value: "32"
+          env:
+          - name: N_THREADS # Number of CPU for LLM used for inferencing
+            value: "32"
           
         # Container for the Pub/sub component
         - name: aio-mq-components
