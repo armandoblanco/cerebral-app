@@ -296,8 +296,9 @@ For the data plane, which handles the direct processing and movement of operatio
      ```
 
 2. **Access InfluxDB:**
-   - Use a web browser to connect to the public IP of the InfluxDB service to access its interface. Validate that there is a bucket named `manufacturing` and that it contains a measurement called `assemblyline` with values.
+   - Use a web browser to connect to the Server IP of the InfluxDB service to access its interface, example htttp://<IP Server>:8086. Validate that there is a bucket named `manufacturing` and that it contains a measurement called `assemblyline` with values. To access to Grafana the user is **admin** and the password id **ArcPassword123!!**
 
+   ![Grafana](/resources/images/grafana.png)
 
 
 3. **Install Redis:**
@@ -348,7 +349,7 @@ At this point in the setup, "Cerebral" is fully operational using only Azure Ope
 4. **Submitting Queries**:
    - Enter your question in the text box or choose a common question from the FAQ list displayed on the page. Hit the "Submit" button to see Cerebral in action.
 
-   ![Login to Cerebral](/resources/images/login.png)
+   ![Login to Cerebral](/resources/images/cerebral-ask.png)
 
 5. **Viewing Responses**:
    - The system will process your query using Azure Open AI, and the response, whether it be data visualizations or text information, will be displayed on the same page. This allows you to assess the accuracy and relevance of the response to your query.
@@ -374,7 +375,7 @@ At this point in the setup, "Cerebral" is fully operational using only Azure Ope
 
    ![Response based in near real time data](/resources/images/query-data.png)
 
-   
+
 
 
 6. **Evaluating Performance**:
