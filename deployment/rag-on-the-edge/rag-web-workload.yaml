@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rag-web-workload
-  namespace: cerebral
+  namespace: azure-iot-operations
   labels:
     app: rag-web-workload
 spec:
