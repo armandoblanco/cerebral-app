@@ -475,10 +475,3 @@ kubectl apply -f https://raw.githubusercontent.com/armandoblanco/cerebral-app/ma
 ### Conclusion
 
 By following these steps, you should have a fully functioning Cerebral implementation integrated with Azure IoT Operations and ready for real-time data analysis and troubleshooting. This setup supports both Azure OpenAI and on-premises RAG processing, offering flexibility and high performance in diverse operational environments.
-
-
-Kam VedBrat
-Sean Parham
-Rajya Bhaiya
-Deb Dubrow
-Ansley Yeo and Armando Blanco
