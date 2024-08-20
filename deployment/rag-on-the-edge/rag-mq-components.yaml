@@ -2,7 +2,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: edgeragpubsub
-  namespace: cerebral
+  namespace: azure-iot-operations
 spec:
   type: pubsub.aio-mq-pubsub-pluggable # DO NOT CHANGE
   version: v1

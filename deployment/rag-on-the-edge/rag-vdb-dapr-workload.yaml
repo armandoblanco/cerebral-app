@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rag-vdb-dapr-workload
-  namespace: cerebral
+  namespace: azure-iot-operations
   labels:
     app: rag-vdb-dapr-workload
 spec:
@@ -43,9 +43,6 @@ spec:
         - name: aio-ca-trust-bundle
           configMap:
             name: aio-ca-trust-bundle-test-only
-
-      imagePullSecrets:
-         - name: cctestotdata
 
       containers:
         - name: rag-vdb

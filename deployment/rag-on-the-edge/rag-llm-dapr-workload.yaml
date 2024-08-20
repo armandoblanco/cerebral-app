@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rag-llm-dapr-workload
-  namespace: cerebral
+  namespace: azure-iot-operations
   # labels:
   #   app: rag-llm-dapr-workload
 spec:
@@ -44,17 +44,14 @@ spec:
           configMap:
             name: aio-ca-trust-bundle-test-only
 
-      imagePullSecrets:
-         - name: cctestotdata
-
       containers:
         - name: rag-llm
           image: agoraarmbladev.azurecr.io/jumpstart-rag-slm:v2
           imagePullPolicy: Always
           # Remove commented out env variable if you want to override the # of logical cores in your system
-          env:
-          - name: N_THREADS # Number of CPU for LLM used for inferencing
-            value: "32"
+          #env:
+          #- name: N_THREADS # Number of CPU for LLM used for inferencing
+          #  value: "32"
           
         # Container for the Pub/sub component
         - name: aio-mq-components
