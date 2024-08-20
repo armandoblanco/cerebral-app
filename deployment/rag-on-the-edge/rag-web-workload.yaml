@@ -45,7 +45,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: rag-web-service
-  namespace: cerebral
+  namespace: azure-iot-operations
   labels:
     app: rag-web-workload
 spec:
